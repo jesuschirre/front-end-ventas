@@ -10,10 +10,178 @@ import {
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { authorsTableData, projectsTableData } from "@/data";
+import { useState, useEffect } from "react";
 
 export function Tables() {
+  const [clientes, setClientes] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+
+  useEffect(() => {
+    fetch("https://back-ventas.onrender.com/api/clientes")
+      .then((response) => response.json())
+      .then((data) => setClientes(data))
+      .catch((error) => {
+        console.error("Error al obtener los clientes:", error);
+      });
+  }, []); // Agregado array de dependencias vacío
+
+  useEffect(() => {
+    fetch("https://back-ventas.onrender.com/api/usuarios")
+      .then((response) => response.json())
+      .then((data) => setUsuarios(data))
+      .catch((error) => {
+        console.error("Error al obtener los usuarios:", error);
+      });
+  },[])
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
+      
+      {/* Tabla de Clientes */}
+      <Card>
+        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
+          <Typography variant="h6" color="white">
+            Clientes
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+          <table className="w-full min-w-[640px] table-auto">
+            <thead>
+              <tr>
+                {["id","Nombre", "Teléfono","createdAt"].map((el) => (
+                  <th
+                    key={el}
+                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                  >
+                    <Typography
+                      variant="small"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                    >
+                      {el}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {clientes.map((cliente, index) => {
+                const className = `py-3 px-5 ${
+                  index === clientes.length - 1
+                    ? ""
+                    : "border-b border-blue-gray-50"
+                }`;
+                return (
+                  <tr key={cliente.id}>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {cliente.id}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {cliente.nombre}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {cliente.telefono}
+                      </Typography>
+                    </td>
+                    <td className="{className}">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                        >
+                          {cliente.createdAt}
+                        </Typography>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+
+          </table>
+        </CardBody>
+      </Card>
+
+       {/* Tabla de usuarios */}
+       <Card>
+        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
+          <Typography variant="h6" color="white">
+            Clientes
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+          <table className="w-full min-w-[640px] table-auto">
+            <thead>
+              <tr>
+                {["id","Usuario"].map((el) => (
+                  <th
+                    key={el}
+                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                  >
+                    <Typography
+                      variant="small"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                    >
+                      {el}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {usuarios.map((usuario, index) => {
+                const className = `py-3 px-5 ${
+                  index === usuarios.length - 1
+                    ? ""
+                    : "border-b border-blue-gray-50"
+                }`;
+                return (
+                  <tr key={usuario.id}>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {usuario.id}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {usuario.usuario}
+                      </Typography>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+
+          </table>
+        </CardBody>
+      </Card>        
+
+      {/* Tabla de Autores */}
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
@@ -105,6 +273,8 @@ export function Tables() {
           </table>
         </CardBody>
       </Card>
+
+      {/* Tabla de Proyectos */}
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
@@ -115,21 +285,19 @@ export function Tables() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["companies", "members", "budget", "completion", ""].map(
-                  (el) => (
-                    <th
-                      key={el}
-                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                {["companies", "members", "budget", "completion", ""].map((el) => (
+                  <th
+                    key={el}
+                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                  >
+                    <Typography
+                      variant="small"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400"
                     >
-                      <Typography
-                        variant="small"
-                        className="text-[11px] font-bold uppercase text-blue-gray-400"
-                      >
-                        {el}
-                      </Typography>
-                    </th>
-                  )
-                )}
+                      {el}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
