@@ -7,21 +7,24 @@ import {
   Chip,
   Tooltip,
   Progress,
+  Button
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { authorsTableData, projectsTableData } from "@/data";
 import { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 export function Tables() {
   const [clientes, setClientes] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
 
   useEffect(() => {
     fetch("https://back-ventas.onrender.com/api/clientes")
       .then((response) => response.json())
       .then((data) => setClientes(data))
       .catch((error) => {
-        console.error("Error al obtener los clientes:", error);
+        console.error("Error al obtener los clientes:", error); 
       });
   }, []); // Agregado array de dependencias vacío
 
@@ -33,6 +36,26 @@ export function Tables() {
         console.error("Error al obtener los usuarios:", error);
       });
   },[])
+
+  useEffect(() => {
+    fetch("https://back-ventas.onrender.com/api/producto")
+    .then((response) => response.json())
+    .then((data) => setProductos(data))
+    .catch((error) => {
+      console.error("Error al obtener los productos:", error);
+    });
+  }, [])
+
+  useEffect(() => {
+    fetch("https://back-ventas.onrender.com/api/categoria")
+      .then((response) => response.json())
+      .then((data) => setCategorias(data))
+      .catch((error) => {
+        console.error("Error al obtener los productos:", error);
+      });
+  },[])
+
+
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -100,7 +123,7 @@ export function Tables() {
                         {cliente.telefono}
                       </Typography>
                     </td>
-                    <td className="{className}">
+                    <td className={className}>
                       <Typography
                         variant="small"
                         color="blue-gray"
@@ -122,7 +145,7 @@ export function Tables() {
        <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Clientes
+            Usuarios
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
@@ -171,6 +194,118 @@ export function Tables() {
                       >
                         {usuario.usuario}
                       </Typography>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+
+          </table>
+        </CardBody>
+      </Card>
+
+       {/* Tabla de productos */}
+      <Card>
+        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
+          <Typography variant="h6" color="white">
+            Productos
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-x-scroll px-2 pt-0 pb-2">
+          <table className="w-full min-w-[640px] table-auto">
+            <thead>
+                <tr>
+                  {["id","Nombre","Precio","stock","categoria"].map((el) => (
+                    <th
+                      key={el}
+                      className="border-b border-blue-gray-50 py-2 px-4 text-left"
+                    >
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      >
+                        {el}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+            </thead>
+            
+            <tbody>
+              {productos.map((producto, index) => {
+                const categoria = categorias.find(cat => cat.id === producto.categoriaId);
+                const className = `py-3 px-5 ${
+                  index === productos.length - 1
+                    ? ""
+                    : "border-b border-blue-gray-50"
+                }`;
+                return (
+                  
+                  <tr key={producto.id}>
+                    
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {producto.id}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {producto.nombre}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {producto.precio}
+                      </Typography>
+                    </td>
+                    <td className={className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                        >
+                          {producto.stock}
+                        </Typography>
+                    </td>
+                    <td className= {className}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                        >
+                          {categoria ? categoria.nombre : "Sin categoría"}
+                        </Typography>
+                    </td>
+
+                    <td className={className}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          className="text-xs font-semibold text-blue-gray-600"
+                        >
+                          remove
+                        </Typography>
+                    </td>
+                    <td className={className}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          className="text-xs font-semibold text-blue-gray-600"
+                        >
+                          Edit
+                        </Typography>
                     </td>
                   </tr>
                 );
